@@ -27,16 +27,9 @@ During setup:
 
 After installation, I opened **MySQL Workbench**, created a new connection, and successfully connected to the local MySQL Server.
 
-> 📸 **IMAGE 1 — MySQL Workbench Connection**
->
-> Take a screenshot showing MySQL Workbench successfully connected to the server.
+![Payload Download](https://imgur.com/iIlk7X8.png)
 
-```html
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Workbench Connection">
-</p>
-```
-
+![Payload Download](https://imgur.com/0HXyL9D.png) 
 ---
 
 ## 3. Populate the Database
