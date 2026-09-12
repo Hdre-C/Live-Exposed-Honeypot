@@ -16,18 +16,8 @@ C:\ProgramData\MySQL\MySQL Server 8.0\Data\mysql_general.log
 
 The honeypot VM was added as a resource for the DCR.
 
-> 📸 **IMAGE 1 — Data Collection Rule**
->
-> Take a screenshot of the DCR overview showing:
->
-> - DCR name
-> - Honeypot VM
-> - Region
-> - Log Analytics destinationhttps://imgur.com/fgGjYtK
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Data Collection Rule">
-</p>
+![Payload Download](https://imgur.com/fgGjYtK.png)
 
 ---
 
@@ -47,14 +37,7 @@ MySQLAudit_CL
 
 This allows MySQL connections and queries to be searched using **KQL**.
 
-> 📸 **IMAGE 2 — MySQL Log Source**
->
-> Take a screenshot of the DCR configuration showing the `mysql_general.log` file path and the custom table destination.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Custom Text Log Configuration">
-</p>
-
+![Payload Download](https://imgur.com/2IvzVDD.png)
 ---
 
 ## 3. Send Logs to Log Analytics
@@ -92,46 +75,7 @@ MySQLAudit_CL
 
 The query confirmed that MySQL activity was successfully reaching Azure.
 
-> 📸 **IMAGE 3 — MySQL Logs in Log Analytics**
->
-> Run the query above and take a screenshot showing:
->
-> - `MySQLAudit_CL`
-> - Recent timestamps
-> - MySQL query/log data
-> - Multiple ingested events
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Logs in Log Analytics">
-</p>
-
----
-
-## 5. Confirm End-to-End Logging
-
-A few test queries were executed in MySQL Workbench and then searched for in Log Analytics.
-
-Example:
-
-```sql
-USE lnp_corp;
-
-SELECT *
-FROM users
-LIMIT 10;
-```
-
-The same activity should appear inside `MySQLAudit_CL`, confirming the full logging pipeline is working.
-
-> 📸 **IMAGE 4 — End-to-End Verification**
->
-> Take a screenshot of a MySQL query from Workbench and the matching event inside Log Analytics.
->
-> This shows that activity on the VM is successfully being collected and ingested into Azure.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL End-to-End Log Verification">
-</p>
+![Payload Download](https://imgur.com/JMbnL7s.png)
 
 ---
 
