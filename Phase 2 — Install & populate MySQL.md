@@ -44,17 +44,7 @@ lnp_corp
 
 After execution, I refreshed the **Schemas** tab to confirm that the database and tables were successfully created.
 
-> ⚠️ The import may appear frozen while processing the dummy data. If the import fails, retry the script or reduce the number of generated users.
-
-> 📸 **IMAGE 2 — lnp_corp Schema**
->
-> Take a screenshot showing the `lnp_corp` schema and its tables inside MySQL Workbench.
-
-```html
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="lnp_corp Database Schema">
-</p>
-```
+![Payload Download](https://imgur.com/yeUmRzb.png)
 
 ---
 
@@ -72,15 +62,7 @@ SHOW VARIABLES LIKE 'general_log%';
 
 This allows MySQL activity to be written to a local log file for later collection and analysis.
 
-> 📸 **IMAGE 3 — General Logging Enabled**
->
-> Take a screenshot of the query results showing that `general_log` is enabled.
-
-```html
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL General Logging Enabled">
-</p>
-```
+![Payload Download](https://imgur.com/O9Qkt63.png)
 
 ---
 
@@ -113,25 +95,12 @@ A few test `SELECT` queries were executed inside MySQL Workbench.
 Example:
 
 ```sql
-USE lnp_corp;
-
-SELECT * 
-FROM users
-LIMIT 10;
+SELECT * FROM payments
 ```
 
 The `mysql_general.log` file was then checked to confirm that the queries were being recorded.
 
-> 📸 **IMAGE 4 — MySQL Log Verification**
->
-> Take a screenshot of `mysql_general.log` showing the test SQL queries being logged.
-
-```html
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL General Log Verification">
-</p>
-```
-
+![Payload Download](https://imgur.com/I5L8zUG.png)
 ---
 
 ## Phase 2 Complete
