@@ -82,13 +82,15 @@ Both queries were then configured as **Microsoft Sentinel Analytics Rules**.
 The rules monitor for:
 
 - Successful `administrator` or `guest` VM logins
-- Successful MySQL authentication  https://imgur.com/n3KBPo7
+- Successful MySQL authentication 
 
 The rules were enabled **before Phase 5** so they would already be active when the honeypot became publicly accessible.
 
 ![Payload Download](https://imgur.com/ZrqhKKy.png)
 
 ![Payload Download](https://imgur.com/n3KBPo7.png)
+
+![Payload Download](https://imgur.com/qoyS2eX.png)
 ---
 
 ## 4. Verify the Clean Baseline
