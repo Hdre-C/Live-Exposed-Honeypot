@@ -9,7 +9,6 @@ The VM is still locked down during this phase so the detections can be tested ag
 ## 1. Successful VM Login Detection
 
 The first detection monitors successful logins to the honeypot using `DeviceLogonEvents`.
-https://imgur.com/rGOvIqj
 ```kusto
 let MyDevice = "corp-na02-main";
 
@@ -28,20 +27,7 @@ DeviceLogonEvents
 
 This detection will alert when the `administrator` or `guest` account successfully authenticates to the VM.
 
-> 📸 **IMAGE 1 — VM Login Detection**
->
-> Take a screenshot of the query inside **Microsoft Sentinel / Advanced Hunting**.
->
-> Make sure the following are visible:
->
-> - `DeviceLogonEvents`
-> - `corp-na02-main`
-> - `administrator` / `guest`
-> - `LogonSuccess`
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Successful VM Login Detection">
-</p>
+![Payload Download](https://imgur.com/rGOvIqj.png)
 
 ---
 
@@ -52,17 +38,16 @@ The second detection monitors `MySQLAudit_CL` for successful authentication to t
 The MySQL general log stores authentication events inside `RawData`, so the query parses the log into useful fields.
 
 ```kusto
+// SQL Server
 let MyDevice = "corp-na02-main";
-
 let FailedConnections =
 MySQLAudit_CL
 | extend RawData = replace_string(RawData, "\t", " ")
 | extend DeviceName = tostring(split(_ResourceId, "/")[-1])
-| where DeviceName == MyDevice
+| where DeviceName =~ MyDevice
 | where RawData has "Access denied"
 | extend ConnectionId = extract(@"^\S+\s+(\d+)\s+Connect", 1, RawData)
 | distinct ConnectionId;
-
 MySQLAudit_CL
 | extend RawData = replace_string(RawData, "\t", " ")
 | extend DeviceName = tostring(split(_ResourceId, "/")[-1])
@@ -75,45 +60,18 @@ MySQLAudit_CL
         ConnectionId in (FailedConnections), "Ignore",
         "LogonSuccess"
     )
+| where ActionType != "Ignore"
+| extend RawData = replace_string(RawData, "\t", " ")
+| extend Username = replace_string(tostring(split(tostring(split(RawData,"@")[0]), " ")[-1]), "'", "")
+| extend IpAddress = replace_string(tostring(split(split(RawData,"@")[1], " ")[0]), "'", "")
 | where ActionType == "LogonSuccess"
-| extend Username =
-    replace_string(
-        tostring(split(tostring(split(RawData, "@")[0]), " ")[-1]),
-        "'",
-        ""
-    )
-| extend IpAddress =
-    replace_string(
-        tostring(split(split(RawData, "@")[1], " ")[0]),
-        "'",
-        ""
-    )
-| project TimeGenerated,
-          DeviceName,
-          Username,
-          IpAddress,
-          ActionType,
-          RawData
+| project TimeGenerated, DeviceName, Username, IpAddress, ActionType, RawData
 | order by TimeGenerated desc
 ```
 
 This allows successful MySQL authentication to be separated from failed login attempts.
 
-> 📸 **IMAGE 2 — MySQL Login Detection**
->
-> Run the query and take a screenshot showing:
->
-> - `MySQLAudit_CL`
-> - `DeviceName`
-> - `Username`
-> - `IpAddress`
-> - `ActionType`
->
-> It is normal if there are no suspicious successful logins yet because the honeypot has not been exposed.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Successful MySQL Login Detection">
-</p>
+![Payload Download](https://imgur.com/nx8wTGm.png)
 
 ---
 
@@ -124,24 +82,13 @@ Both queries were then configured as **Microsoft Sentinel Analytics Rules**.
 The rules monitor for:
 
 - Successful `administrator` or `guest` VM logins
-- Successful MySQL authentication
+- Successful MySQL authentication  https://imgur.com/n3KBPo7
 
 The rules were enabled **before Phase 5** so they would already be active when the honeypot became publicly accessible.
 
-> 📸 **IMAGE 3 — Sentinel Analytics Rules**
->
-> Take a screenshot of the **Analytics Rules** page showing both detection rules enabled.
->
-> Try to show:
->
-> - VM successful login rule
-> - MySQL successful login rule
-> - Rule status = **Enabled**
+![Payload Download](https://imgur.com/ZrqhKKy.png)
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Sentinel Analytics Rules">
-</p>
-
+![Payload Download](https://imgur.com/n3KBPo7.png)
 ---
 
 ## 4. Verify the Clean Baseline
