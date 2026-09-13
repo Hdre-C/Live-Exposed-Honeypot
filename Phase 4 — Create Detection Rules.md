@@ -9,7 +9,7 @@ The VM is still locked down during this phase so the detections can be tested ag
 ## 1. Successful VM Login Detection
 
 The first detection monitors successful logins to the honeypot using `DeviceLogonEvents`.
-
+https://imgur.com/rGOvIqj
 ```kusto
 let MyDevice = "corp-na02-main";
 
