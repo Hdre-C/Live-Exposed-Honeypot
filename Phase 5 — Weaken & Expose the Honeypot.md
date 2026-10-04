@@ -28,17 +28,15 @@ After changing the local security policies, I applied them with:
 gpupdate /force
 ```
 
-> 📸 **IMAGE 1 — Weak Accounts**
->
-> Take a screenshot of **Computer Management → Local Users and Groups** showing:
->
-> - `Administrator`
-> - `Guest`
-> - Both accounts enabled
+![Payload Download](https://imgur.com/nTqZHvA.png)
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Weak Honeypot Accounts">
-</p>
+![Payload Download](https://imgur.com/gEk4gkB.png)
+
+![Payload Download](https://imgur.com/rdQU6DR.png)
+
+![Payload Download](https://imgur.com/4NKTXs2.png)
+
+![Payload Download](https://imgur.com/rtLCXsi.png)
 
 ---
 
@@ -56,13 +54,7 @@ FLUSH PRIVILEGES;
 
 The `%` allows the account to attempt authentication from remote systems rather than only locally.
 
-> 📸 **IMAGE 2 — Remote MySQL Account**
->
-> Take a screenshot in **MySQL Workbench** showing the commands being executed successfully.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Remote MySQL Authentication">
-</p>
+![Payload Download](https://imgur.com/2O2G47r.png)
 
 ---
 
@@ -72,13 +64,7 @@ Before exposing the VM, I captured a **Microsoft Defender Investigation Package*
 
 This provides a clean **pre-breach snapshot** that can later be compared with the post-compromise package.
 
-> 📸 **IMAGE 3 — Pre-Breach Investigation Package**
->
-> Take a screenshot from Microsoft Defender showing the investigation package being collected or completed.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Pre-Breach Investigation Package">
-</p>
+![Payload Download](https://imgur.com/ddFFCPt.png)
 
 ---
 
@@ -94,6 +80,7 @@ wf.msc
 
 The VM is now intentionally less protected from inbound connections.
 
+![Payload Download](https://imgur.com/Md0io1m.png)
 ---
 
 ## 5. Expose the VM to the Internet
@@ -107,15 +94,7 @@ This makes services such as:
 
 reachable by external systems.
 
-> 📸 **IMAGE 4 — NSG Exposure**
->
-> Take a screenshot of the VM's **NSG inbound rules** showing that internet traffic is now allowed.
->
-> Make sure the rule priority, action, source, and destination are visible.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Honeypot NSG Exposure">
-</p>
+![Payload Download](https://imgur.com/5y54EJX.png)
 
 ---
 
@@ -124,36 +103,10 @@ reachable by external systems.
 The exact time the NSG was opened was recorded.
 
 ```text
-Exposure Timestamp: ______________________________
+Exposure Timestamp: 2026-08-20T03:46:46.4049687Z
 ```
 
 This timestamp marks the **start of the live incident window** and will later be used to determine how long it took before the honeypot was attacked.
-
-> 📸 **IMAGE 5 — Exposure Timestamp**
->
-> Take a screenshot showing the NSG rule change or Azure activity log with the timestamp visible.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Honeypot Exposure Timestamp">
-</p>
-
----
-
-## 7. Confirm Detections Are Active
-
-Before leaving the honeypot exposed, I confirmed that the Phase 4 Sentinel detection rules were still enabled.
-
-```text
-Weak Accounts
-      ↓
-Firewall Disabled
-      ↓
-NSG Opened
-      ↓
-Honeypot Exposed
-      ↓
-Sentinel Monitoring
-```
 
 ---
 
@@ -167,6 +120,5 @@ At the end of Phase 5:
 - Windows Firewall is disabled
 - The NSG allows inbound internet traffic
 - The exact exposure timestamp is recorded
-- Sentinel detections are active
 
 The honeypot is now **live and exposed to real-world attacker traffic**.
