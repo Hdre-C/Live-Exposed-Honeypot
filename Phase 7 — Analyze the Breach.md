@@ -1,15 +1,6 @@
 # Phase 7 — Analyze the Breach
 
-In Phase 7, I analyzed activity captured after the honeypot was exposed.
-
-The investigation focused on:
-
-- Successful VM logins
-- Process activity
-- Network connections
-- File and registry activity
-- MySQL activity
-- Outbound network traffic
+I analyzed activity captured after the honeypot was exposed.
 
 ---
 
