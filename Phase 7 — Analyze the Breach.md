@@ -26,12 +26,7 @@ DeviceLogonEvents
 | where DeviceName == MyDevice
 | where AccountName in~ ("administrator", "guest")
 | where ActionType == "LogonSuccess"
-| project TimeGenerated,
-          RemoteIP,
-          AccountName,
-          DeviceName,
-          ActionType,
-          LogonType
+| project TimeGenerated, RemoteIP, AccountName, DeviceName, ActionType, LogonType
 | order by TimeGenerated asc
 ```
 
