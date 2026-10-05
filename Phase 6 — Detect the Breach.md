@@ -27,22 +27,7 @@ DeviceLogonEvents
 
 This shows who attempted to authenticate, the source IP, targeted account, and whether the login succeeded or failed.
 
-> 📸 **IMAGE 1 — VM Authentication Activity**
->
-> Run the query above and screenshot the results.
->
-> Make sure these columns are visible:
->
-> - `TimeGenerated`
-> - `RemoteIP`
-> - `AccountName`
-> - `ActionType`
-> - `LogonType`
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="VM Authentication Activity">
-</p>
-
+![Payload Download](https://imgur.com/rFt06gj.png)
 ---
 
 ## 2. Monitor MySQL Authentication
@@ -51,7 +36,7 @@ This shows who attempted to authenticate, the source IP, targeted account, and w
 
 ```kusto
 let MyDevice = "corp-na02-main";
-let MyTimeframe = todatetime("YOUR_EXPOSURE_TIMESTAMP");
+let MyTimeframe = todatetime("2026-08-20T03:46:46.4049687Z");
 
 let FailedConnections =
 MySQLAudit_CL
@@ -78,42 +63,17 @@ MySQLAudit_CL
 | where ActionType != "Ignore"
 | extend Username =
     replace_string(
-        tostring(split(tostring(split(RawData, "@")[0]), " ")[-1]),
-        "'",
-        ""
-    )
+        tostring(split(tostring(split(RawData, "@")[0]), " ")[-1]), "'", "" )
 | extend IpAddress =
     replace_string(
-        tostring(split(split(RawData, "@")[1], " ")[0]),
-        "'",
-        ""
-    )
-| project TimeGenerated,
-          DeviceName,
-          Username,
-          IpAddress,
-          ActionType,
-          RawData
+        tostring(split(split(RawData, "@")[1], " ")[0]),  "'", "" )
+| project TimeGenerated, DeviceName, Username, IpAddress, ActionType, RawData
 | order by TimeGenerated desc
 ```
 
 This separates MySQL activity into **successful and failed authentication attempts**.
 
-> 📸 **IMAGE 2 — MySQL Authentication Activity**
->
-> Screenshot the query results showing:
->
-> - `TimeGenerated`
-> - `Username`
-> - `IpAddress`
-> - `ActionType`
->
-> Try to capture both failed and successful authentication activity if available.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Authentication Activity">
-</p>
-
+![Payload Download](https://imgur.com/oilTBVA.png)
 ---
 
 ## 3. Monitor MySQL Queries
@@ -122,8 +82,7 @@ If an attacker successfully authenticates to MySQL, the query logs can show what
 
 ```kusto
 let MyDevice = "corp-na02-main";
-let ServerVulnerableDateTime = todatetime("YOUR_EXPOSURE_TIMESTAMP");
-
+let ServerVulnerableDateTime = todatetime("2026-08-20T03:46:46.4049687Z");
 MySQLAudit_CL
 | where TimeGenerated > ServerVulnerableDateTime
 | where RawData has "Query"
@@ -132,30 +91,13 @@ MySQLAudit_CL
 | where DeviceName == MyDevice
 | extend ActionType = "Query"
 | extend Query = split(RawData, "Query")[1]
-| project TimeGenerated,
-          DeviceName,
-          ActionType,
-          Query,
-          RawData
+| project TimeGenerated, DeviceName, ActionType, Query, RawData
 | order by TimeGenerated desc
 ```
 
 This provides visibility into commands executed against the `lnp_corp` database.
 
-> 📸 **IMAGE 3 — MySQL Query Activity**
->
-> If MySQL was successfully accessed, screenshot any suspicious queries.
->
-> Make sure the following are visible:
->
-> - Timestamp
-> - Device name
-> - SQL query
-> - Raw log data
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Query Activity">
-</p>
+![Payload Download](https://imgur.com/LPbXFCY.png)
 
 ---
 
@@ -165,19 +107,10 @@ The **Sentinel Analytics Rules created in Phase 4** were monitored for alerts af
 
 A triggered rule indicates activity that matched one of the configured detections.
 
-> 📸 **IMAGE 4 — Sentinel Incident**
->
-> When a detection triggers, take a screenshot of the Sentinel incident showing:
->
-> - Incident name
-> - Severity
-> - Status
-> - Created time
-> - Related IP/account if visible
+![Payload Download](https://imgur.com/4cGHDjL.png)
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Microsoft Sentinel Incident">
-</p>
+
+![Payload Download](https://imgur.com/DmNcqgd.png)
 
 ---
 
