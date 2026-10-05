@@ -1,285 +1,224 @@
 # Phase 7 — Analyze the Breach
 
-In this phase, I investigated the activity captured after the honeypot was exposed.
+In Phase 7, I analyzed activity captured after the honeypot was exposed.
 
-The goal was to determine:
+The investigation focused on:
 
-- How the attacker gained access
-- Which account was compromised
-- What commands and processes were executed
-- What files or persistence mechanisms were created
-- What external systems the VM communicated with
-- Whether the MySQL database was accessed
+- Successful VM logins
+- Process activity
+- Network connections
+- File and registry activity
+- MySQL activity
+- Outbound network traffic
 
 ---
 
-## 1. Investigate Successful VM Logins
+## 1. Investigate Successful VM Authentication
 
-I first reviewed successful authentication events after the Phase 5 exposure time.
+I reviewed successful logins to `corp-na02-main`.
 
 ```kusto
-let MyDevice = "corp-na02-main";
-let ServerVulnerableDateTime = todatetime("YOUR_EXPOSURE_TIMESTAMP");
-
 DeviceLogonEvents
-| where TimeGenerated > ServerVulnerableDateTime
-| where DeviceName == MyDevice
-| where AccountName in~ ("administrator", "guest")
+| where DeviceName == "corp-na02-main"
+| where RemoteIP == "80.94.95.43"
 | where ActionType == "LogonSuccess"
-| project TimeGenerated, RemoteIP, AccountName, DeviceName, ActionType, LogonType
+| project TimeGenerated,
+          RemoteIP,
+          AccountName,
+          DeviceName,
+          ActionType,
+          LogonType
 | order by TimeGenerated asc
 ```
 
-This identifies the **source IP, account, and time of successful access**.
+A successful remote interactive login occurred on **August 20, 2026 at 1:34:54 PM**.
 
-![Payload Download](https://imgur.com/V9Y4O3i.png)
+- **Source IP:** `80.94.95.43`
+- **Account:** `administrator`
+- **Device:** `corp-na02-main`
+- **Result:** `LogonSuccess`
+- **Logon Type:** `RemoteInteractive`
+
+<p align="center">
+  <img src="https://imgur.com/V9Y4O3i.png" width="1200" alt="Successful RemoteInteractive Login">
+</p>
 
 ---
 
 ## 2. Investigate Process Activity
 
-After identifying a successful login, I reviewed processes executed on the VM.
+After the successful login, I reviewed processes executed under the `administrator` account.
+
+### RDP Session Initialization
 
 ```kusto
-let MyDevice = "corp-na02-main";
-let BreachTime = todatetime("YOUR_SUCCESSFUL_LOGIN_TIMESTAMP");
-
 DeviceProcessEvents
-| where DeviceName == MyDevice
-| where Timestamp >= BreachTime
-| where AccountName in~ ("administrator", "guest")
-| project Timestamp,
+| where DeviceName == "corp-na02-main"
+| where AccountName == "administrator"
+| where FileName in~ ("rdpclip.exe", "userinit.exe", "explorer.exe")
+| project TimeGenerated,
           AccountName,
+          DeviceName,
+          FileName,
+          ProcessCommandLine,
+          InitiatingProcessCommandLine
+| order by TimeGenerated asc
+```
+
+The following processes appeared immediately after the login:
+
+- **1:34:57 PM** — `rdpclip.exe`
+- **1:34:59 PM** — `userinit.exe`
+- **1:34:59 PM** — `explorer.exe`
+
+These events show the interactive Windows session being established.
+
+<p align="center">
+  <img src="https://imgur.com/wiD0BlP.png" width="1200" alt="RDP Session Initialization">
+</p>
+
+### Interactive Activity
+
+```kusto
+DeviceProcessEvents
+| where DeviceName == "corp-na02-main"
+| where AccountName == "administrator"
+| where TimeGenerated between (
+    datetime(2026-08-20 13:36:25) ..
+    datetime(2026-08-20 13:36:35)
+)
+| where FileName =~ "Taskmgr.exe"
+| project TimeGenerated,
+          AccountName,
+          DeviceName,
           FileName,
           ProcessCommandLine,
           InitiatingProcessFileName,
           InitiatingProcessCommandLine
-| order by Timestamp asc
+| order by TimeGenerated asc
 ```
 
-This helps identify:
+At **1:36:30 PM**, `Taskmgr.exe` was launched from `explorer.exe`.
 
-- Reconnaissance commands
-- PowerShell activity
-- Download commands
-- Security tampering
-- Persistence attempts
+This was the first clear user-driven activity observed after the remote session began.
 
-
-![Payload Download](https://imgur.com/wiD0BlP.png)
+<p align="center">
+  <img src="https://imgur.com/XbasuHc.png" width="1200" alt="Task Manager Activity">
+</p>
 
 ---
 
 ## 3. Investigate Network Activity
 
-I then reviewed outbound network connections from the compromised VM.
+I reviewed network connections associated with the compromised session.
 
 ```kusto
-let MyDevice = "corp-na02-main";
-let BreachTime = todatetime("YOUR_SUCCESSFUL_LOGIN_TIMESTAMP");
-
 DeviceNetworkEvents
-| where DeviceName == MyDevice
-| where Timestamp >= BreachTime
-| project Timestamp,
+| where DeviceName == "corp-na02-main"
+| where TimeGenerated between (
+    datetime(2026-08-20 13:35:15) ..
+    datetime(2026-08-20 13:35:20)
+)
+| where InitiatingProcessFileName =~ "dllhost.exe"
+| project TimeGenerated,
           InitiatingProcessFileName,
           InitiatingProcessCommandLine,
           RemoteIP,
           RemotePort,
-          RemoteUrl,
-          ActionType
-| order by Timestamp asc
-```
-
-This can reveal communication with:
-
-- Payload-hosting servers
-- Suspicious external IPs
-- Possible command-and-control infrastructure
-
-![Payload Download](https://imgur.com/XbasuHc.png)
-
-
----
-
-## 4. Investigate File Activity
-
-`DeviceFileEvents` was used to identify files created, downloaded, or modified after the breach.
-
-```kusto
-let MyDevice = "corp-na02-main";
-let BreachTime = todatetime("YOUR_SUCCESSFUL_LOGIN_TIMESTAMP");
-
-DeviceFileEvents
-| where DeviceName == MyDevice
-| where Timestamp >= BreachTime
-| project Timestamp,
           ActionType,
-          FileName,
-          FolderPath,
-          SHA256,
-          InitiatingProcessFileName
-| order by Timestamp asc
+          InitiatingProcessRemoteSessionIP
 ```
 
-Suspicious executables or files created shortly after the login were prioritized for investigation.
+At **1:35:17 PM**, `dllhost.exe` connected to:
 
-![Payload Download](https://imgur.com/TYqJ3ya.png)
+- **Destination IP:** `85.210.196.11`
+- **Port:** `443`
+- **Result:** `ConnectionSuccess`
+- **Remote Session IP:** `80.94.95.43`
 
-
----
-
-## 5. Investigate Registry Activity
-
-Registry telemetry was reviewed for possible persistence or system changes.
-
-```kusto
-let MyDevice = "corp-na02-main";
-let BreachTime = todatetime("YOUR_SUCCESSFUL_LOGIN_TIMESTAMP");
-
-DeviceRegistryEvents
-| where DeviceName == MyDevice
-| where Timestamp >= BreachTime
-| project Timestamp,
-          ActionType,
-          RegistryKey,
-          RegistryValueName,
-          RegistryValueData,
-          InitiatingProcessFileName
-| order by Timestamp asc
-```
-
-> 📸 **IMAGE 5 — Registry Activity**
->
-> Only include this image if meaningful registry changes were found.
->
-> Show the suspicious registry key/value and the process responsible.
+The connection occurred during the same remote session.
 
 <p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Suspicious Registry Activity">
+  <img src="https://imgur.com/TYqJ3ya.png" width="1200" alt="Outbound Connection During RDP Session">
 </p>
 
 ---
 
-## 6. Investigate MySQL Activity
+## 4. Investigate MySQL Activity
 
-If MySQL was accessed, I reviewed the query log to determine what commands were executed.
+I reviewed MySQL authentication and query activity after exposure.
 
 ```kusto
-let MyDevice = "corp-na02-main";
-let ServerVulnerableDateTime = todatetime("YOUR_EXPOSURE_TIMESTAMP");
-
 MySQLAudit_CL
-| where TimeGenerated > ServerVulnerableDateTime
-| where RawData has "Query"
 | extend RawData = replace_string(RawData, "\t", " ")
 | extend DeviceName = tostring(split(_ResourceId, "/")[-1])
-| where DeviceName == MyDevice
-| extend ActionType = "Query"
-| extend Query = split(RawData, "Query")[1]
+| where DeviceName == "corp-na02-main"
+| where RawData has "64.89.163.94"
+    or RawData has "RECOVER_YOUR_DATA"
 | project TimeGenerated,
           DeviceName,
-          ActionType,
-          Query,
           RawData
 | order by TimeGenerated asc
 ```
 
-This helps determine whether the attacker attempted to **view, modify, or extract data** from the `lnp_corp` database.
+A remote host at `64.89.163.94` connected to MySQL using the `root` account.
 
-> 📸 **IMAGE 6 — MySQL Activity**
->
-> If suspicious MySQL activity exists, screenshot the queries executed after the breach.
->
-> Show:
->
-> - Timestamp
-> - Device name
-> - SQL query
-> - Raw log entry
+The following activity occurred:
+
+1. **2:09:12 AM** — `root@64.89.163.94` connected through TCP/IP
+2. **2:09:15 AM** — `DROP TABLE recover_your_data`
+3. **2:09:15 AM** — A new `RECOVER_YOUR_DATA` table was created
+4. **2:09:15 AM** — A Bitcoin ransom message was inserted
+
+This confirmed unauthorized modification of the MySQL database.
 
 <p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Suspicious MySQL Activity">
+  <img src="https://imgur.com/S7JpF7I.png" width="1200" alt="Confirmed MySQL Ransom Activity">
 </p>
 
 ---
 
-## 7. Review Denied Outbound Traffic
+## 5. Attack Timeline
 
-`NTANetAnalytics` was also reviewed for outbound traffic attempts from the compromised VM.
+### Windows VM
 
-```kusto
-let MyDevice = "corp-na02-main";
+1. **Aug 20 — 1:34:54 PM** — `80.94.95.43` successfully logs in as `administrator`
+2. **Aug 20 — 1:34:57 PM** — `rdpclip.exe` starts
+3. **Aug 20 — 1:34:59 PM** — `userinit.exe` and `explorer.exe` start
+4. **Aug 20 — 1:35:17 PM** — `dllhost.exe` connects to `85.210.196.11:443`
+5. **Aug 20 — 1:36:30 PM** — `explorer.exe` launches `Taskmgr.exe`
 
-NTANetAnalytics
-| where isnotempty(SrcVm)
-| where SrcVm endswith MyDevice
-| where DeniedOutFlows >= 1
-| project TimeGenerated,
-          DeviceName = MyDevice,
-          FlowType,
-          FlowStatus,
-          SrcIp,
-          SrcPorts,
-          DestIp,
-          DestPort
-| order by TimeGenerated asc
-```
+### MySQL
 
-This can reveal attempted outbound communication that was blocked by the environment.
-
-> 📸 **IMAGE 7 — Outbound Traffic**
->
-> Include this screenshot if suspicious denied outbound traffic was observed.
->
-> Show:
->
-> - Timestamp
-> - Source IP
-> - Destination IP
-> - Destination port
-> - Flow status
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Denied Outbound Traffic">
-</p>
+6. **Aug 23 — 2:09:12 AM** — `64.89.163.94` connects as `root`
+7. **Aug 23 — 2:09:15 AM** — Database modification begins
+8. **Aug 23 — 2:09:15 AM** — Ransom table and Bitcoin payment message are created
 
 ---
 
-## 8. Build the Attack Timeline
+## Phase 6 Findings
 
-After correlating the logs, I created a timeline of the important events.
+The investigation identified two compromise paths.
 
-Example format:
+### Windows VM
 
-1. **[TIME]** — Successful attacker login
-2. **[TIME]** — Remote command execution begins
-3. **[TIME]** — System reconnaissance
-4. **[TIME]** — Security controls modified
-5. **[TIME]** — Payload downloaded
-6. **[TIME]** — Persistence established
-7. **[TIME]** — Additional network or database activity
+`80.94.95.43` successfully logged into the `administrator` account using a `RemoteInteractive` session.
 
-> Replace the example events above with the activity actually observed in your logs.
+The session was followed by interactive process and network activity.
+
+### MySQL Server
+
+`64.89.163.94` successfully accessed MySQL using the `root` account and modified the database by creating a ransom table and inserting a Bitcoin payment message.
 
 ---
 
 ## Phase 7 Complete
 
-At the end of Phase 7, telemetry from multiple sources was correlated to reconstruct the attack:
+The following telemetry sources were reviewed:
 
 ```text
-Authentication
-      ↓
-Process Activity
-      ↓
-File / Registry Changes
-      ↓
-Network Activity
-      ↓
-MySQL Activity
-      ↓
-Attack Timeline
+DeviceLogonEvents
+DeviceProcessEvents
+DeviceNetworkEvents
+MySQLAudit_CL
 ```
-
-The findings from this investigation will be used in **Phase 8 — Contain the Breach**.
