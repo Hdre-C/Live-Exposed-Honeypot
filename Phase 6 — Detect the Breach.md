@@ -1,3 +1,5 @@
+# Phase 6 — Detect the Breach
+
 In this phase, the honeypot remained online while **Microsoft Sentinel and Defender** monitored for real attacker activity.
 
 The goal was to identify:
@@ -114,23 +116,6 @@ A triggered rule indicates activity that matched one of the configured detection
 
 ---
 
-## 5. Investigate Activity After a Successful Login
-
-If a successful VM login is detected, additional Defender tables can be used to see what happened next:
-
-```text
-DeviceProcessEvents
-DeviceFileEvents
-DeviceRegistryEvents
-DeviceNetworkEvents
-```
-
-These tables provide visibility into **commands, processes, files, registry changes, and network activity** performed after access was gained.
-
-Detailed investigation of this activity is performed in **Phase 7**.
-
----
-
 ## Phase 6 Complete
 
 At the end of Phase 6:
@@ -141,5 +126,3 @@ At the end of Phase 6:
 - MySQL queries were monitored
 - Sentinel detection rules were watched for incidents
 - Suspicious activity was identified for deeper investigation in **Phase 7**
-
-The next phase focuses on reconstructing what the attacker did after gaining access.
