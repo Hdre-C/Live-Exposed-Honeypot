@@ -32,21 +32,7 @@ DeviceLogonEvents
 
 This identifies the **source IP, account, and time of successful access**.
 
-> 📸 **IMAGE 1 — Successful Login**
->
-> Screenshot the first suspicious successful login.
->
-> Show:
->
-> - Timestamp
-> - Remote IP
-> - Account
-> - `LogonSuccess`
-> - Device name
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Successful Honeypot Login">
-</p>
+![Payload Download](https://imgur.com/V9Y4O3i.png)
 
 ---
 
@@ -79,21 +65,8 @@ This helps identify:
 - Security tampering
 - Persistence attempts
 
-> 📸 **IMAGE 2 — Suspicious Process Activity**
->
-> Screenshot the most important process activity after the login.
->
-> Try to show:
->
-> - Timestamp
-> - Process name
-> - Command line
-> - Initiating process
-> - Account
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Post-Compromise Process Activity">
-</p>
+![Payload Download](https://imgur.com/wiD0BlP.png)
 
 ---
 
@@ -124,21 +97,8 @@ This can reveal communication with:
 - Suspicious external IPs
 - Possible command-and-control infrastructure
 
-> 📸 **IMAGE 3 — Suspicious Network Connection**
->
-> Screenshot an unusual external connection related to the compromise.
->
-> Show:
->
-> - Timestamp
-> - Process
-> - Remote IP
-> - Remote port
-> - Remote URL if available
+![Payload Download](https://imgur.com/XbasuHc.png)
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Suspicious Network Activity">
-</p>
 
 ---
 
@@ -164,21 +124,8 @@ DeviceFileEvents
 
 Suspicious executables or files created shortly after the login were prioritized for investigation.
 
-> 📸 **IMAGE 4 — File Activity**
->
-> Screenshot any suspicious downloaded or created file.
->
-> Show:
->
-> - File name
-> - Folder path
-> - Action type
-> - Initiating process
-> - SHA256 if available
+![Payload Download](https://imgur.com/TYqJ3ya.png)
 
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Suspicious File Activity">
-</p>
 
 ---
 
