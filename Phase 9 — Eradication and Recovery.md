@@ -14,20 +14,7 @@ Public access to the VM was no longer left open to the internet.
 
 The NSG was returned to a hardened configuration before the VM was removed from Defender isolation.
 
-### 📸 Image 1 — Hardened NSG
-
-Capture the Azure NSG rules showing that the broad inbound access used during the honeypot phase has been removed or restricted.
-
-Show:
-
-- NSG name
-- Inbound security rules
-- RDP restriction
-- MySQL restriction
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Hardened NSG Rules">
-</p>
+[![image-2026-10-07-222410833.png](https://i.postimg.cc/J7361z1P/image-2026-10-07-222410833.png)](https://postimg.cc/6T3Lcw4v)
 
 ---
 
