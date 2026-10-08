@@ -78,27 +78,12 @@ The MySQL server was also secured after the compromise.
 
 Remote public access to MySQL was removed.
 
-The weak remote `root` account created during the honeypot phase was removed or protected with a strong password.
+The weak remote `root` account created during the honeypot phase was removed and local root account protected with a strong password.
 
 MySQL should no longer accept unrestricted connections from the public internet.
 
-Example cleanup:
-
-```sql
-DROP USER 'root'@'%';
-FLUSH PRIVILEGES;
-```
-
-The local administrative MySQL account remained protected with a strong password.
-
-### 📸 Image 4 — MySQL Hardening
-
-Capture MySQL Workbench showing that the unrestricted remote `root@%` account is no longer present.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="MySQL Account Hardening">
-</p>
-
+![Payload Download](https://imgur.com/9mROjLL.png)
+![Payload Download](https://imgur.com/iHkI7ud.png)
 ---
 
 ## 7. Restore the Database
