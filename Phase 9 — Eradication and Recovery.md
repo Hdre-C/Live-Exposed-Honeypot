@@ -14,7 +14,7 @@ Public access to the VM was no longer left open to the internet.
 
 The NSG was returned to a hardened configuration before the VM was removed from Defender isolation.
 
-[![image-2026-10-07-222410833.png](https://i.postimg.cc/J7361z1P/image-2026-10-07-222410833.png)](https://postimg.cc/6T3Lcw4v)
+![Payload Download](https://imgur.com/2xiPc61.png)
 
 ---
 
