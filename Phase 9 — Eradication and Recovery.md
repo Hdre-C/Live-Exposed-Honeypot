@@ -26,7 +26,7 @@ After the network controls were hardened, `corp-na02-main` was removed from Micr
 Device: corp-na02-main
 Status: Released from isolation
 ```
-
+![Payload Download](https://imgur.com/zUkTN3f.png)
 ---
 
 ## 3. Run a Full Microsoft Defender Scan
@@ -67,14 +67,9 @@ The following changes were made:
 - Disabled the `guest` account
 - Kept only a local account protected with a strong password
 
-### 📸 Image 3 — Account Hardening
-
-Capture the Windows account configuration showing the hardened local accounts.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Windows Account Hardening">
-</p>
-
+![Payload Download](https://imgur.com/lO7Ona2.png)
+![Payload Download](https://imgur.com/ykq39wg.png)
+![Payload Download](https://imgur.com/VFAFwAV.png)
 ---
 
 ## 6. Harden MySQL
