@@ -28,5 +28,3 @@ The **Network Security Group (NSG)** was configured to deny inbound internet tra
 The VM was onboarded to **Microsoft Defender for Endpoint (MDE)** to collect security telemetry.
 
 After onboarding, I verified that the VM appeared in the **`DeviceInfo`** table using Advanced Hunting.
-
-> **Phase 1 Goal:** Deploy the honeypot VM, keep it protected during setup, and verify that Microsoft Defender for Endpoint is successfully monitoring the device.
