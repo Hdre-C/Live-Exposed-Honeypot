@@ -15,5 +15,3 @@ The report includes:
 - Containment
 - Recovery
 - Forensic findings
-
----
