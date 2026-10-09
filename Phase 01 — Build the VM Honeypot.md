@@ -1,7 +1,7 @@
 # Phase 1 — Build the VM Honeypot
 
 In this phase, I deployed the **Windows 11 VM** that will act as the honeypot. The VM remains locked down while the environment is being configured.
-
+---
 ### 1. Deploy the Windows 11 VM
 
 ![Phase 1 - VM Honeypot](https://i.imgur.com/dJzVKSr.png)
@@ -10,7 +10,7 @@ In this phase, I deployed the **Windows 11 VM** that will act as the honeypot. T
 - Assigned the VM a **public IP address**.
 - Used a strong administrator username and password.
 - Named the VM **`CORP-NA02-MAIN`** to resemble a legitimate corporate system.
-
+---
 ### 2. Lock Down Inbound Traffic
 
 ![Microsoft Defender for Endpoint - Device Onboarding](https://i.imgur.com/8iqvCni.png)
@@ -18,7 +18,7 @@ In this phase, I deployed the **Windows 11 VM** that will act as the honeypot. T
 The **Network Security Group (NSG)** was configured to deny inbound internet traffic while the honeypot is being built.
 
 > The VM will remain protected until **Phase 5**, when the NSG is opened and the honeypot is intentionally exposed to the internet.
-
+---
 ### 3. Onboard to Microsoft Defender for Endpoint
 
 ![Microsoft Defender for Endpoint - Device Verification](https://i.imgur.com/txhfcXS.png)
