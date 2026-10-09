@@ -40,7 +40,7 @@ This package represents the state of the VM **after the compromise**.
 
 The post-breach package will later be compared with the **pre-breach Investigation Package captured in Phase 5**.
 
-![Payload Download](https://i.postimg.cc/JhR5nbPB/image-2026-10-07-215805372.png)
+![Payload Download](https://imgur.com/at72L73.png)
 ---
 
 ## Phase 8 Complete
