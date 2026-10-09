@@ -22,10 +22,6 @@ The NSG was returned to a hardened configuration before the VM was removed from 
 
 After the network controls were hardened, `corp-na02-main` was removed from Microsoft Defender isolation.
 
-```text
-Device: corp-na02-main
-Status: Released from isolation
-```
 ![Payload Download](https://imgur.com/zUkTN3f.png)
 ---
 
@@ -35,26 +31,14 @@ A full malware scan was performed on the VM using Microsoft Defender.
 
 This was used to check the system for any remaining malicious files or software after the compromise.
 
-### 📸 Image 2 — Full Defender Scan
-
-Capture the Defender page showing the full malware scan request or completed scan.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Microsoft Defender Full Scan">
-</p>
-
+![Payload Download](https://imgur.com/3QVKQs3.png)
 ---
 
 ## 4. Re-enable Windows Firewall
 
 The Windows Firewall, which had been disabled during the honeypot exposure phase, was re-enabled.
 
-```text
-Windows Defender Firewall: Enabled
-```
-
-Firewall protection was restored for all profiles.
-
+![Payload Download](https://imgur.com/0ovqDx8.png)
 ---
 
 ## 5. Harden Local Accounts
@@ -94,13 +78,8 @@ The `lnp_corp` database was returned to its known-good state.
 
 The attacker-created ransom table was no longer part of the recovered database.
 
-### 📸 Image 5 — Restored Database
-
-Capture MySQL Workbench showing the restored `lnp_corp` schema and normal database tables.
-
-<p align="center">
-  <img src="YOUR_IMGUR_LINK" width="1200" alt="Restored MySQL Database">
-</p>
+![Payload Download](https://imgur.com/iylYuc5.png)
+![Payload Download](https://imgur.com/8rTjTKH.png)
 
 ---
 
@@ -125,5 +104,3 @@ Secure MySQL Accounts
      ↓
 Restore Database
 ```
-
-The environment was returned to a hardened state and was ready for **Phase 10 — Reporting**.
